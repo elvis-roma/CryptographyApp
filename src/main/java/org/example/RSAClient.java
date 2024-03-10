@@ -1,11 +1,7 @@
 package org.example;
 
-import javax.crypto.*;
-import javax.crypto.spec.IvParameterSpec;
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.Scanner;
@@ -38,7 +34,11 @@ public class RSAClient {
                 input = scanner.nextLine();
 
                 // Encrypt and send the message
+                long rsaEncryptionStartTime = System.nanoTime();
                 String encryptedMessage = RSAUtils.encryptString(input, publicKey);
+                long rsaEncryptionEndTime = System.nanoTime();
+                long rsaEncryptionTime = rsaEncryptionEndTime - rsaEncryptionStartTime;
+                System.out.println("RSA Encryption Time: " + rsaEncryptionTime + " nanoseconds");
                 writer.write(encryptedMessage + "\n");
                 writer.flush();
 
@@ -50,7 +50,7 @@ public class RSAClient {
             // Close resources
             socket.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 }

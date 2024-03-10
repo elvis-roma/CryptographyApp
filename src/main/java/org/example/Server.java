@@ -20,7 +20,13 @@ public class Server {
             System.out.println("Client connected.");
 
             // Generate key and IV
+            long startTime = System.currentTimeMillis();
             SecretKey key = CryptoUtils.generateKey(256);
+            long endTime = System.currentTimeMillis();
+
+            System.out.println("AES Key Generation Time ("
+                    + 256 + " bits): " + (endTime - startTime) + " milliseconds");
+
             IvParameterSpec iv = CryptoUtils.generateIv();
 
             // Send key and IV to the client
@@ -38,7 +44,11 @@ public class Server {
                 input = reader.readLine();
                 if (!input.equals("finish")) {
                     // Decrypt the message
+                    long aesDecryptionStartTime = System.nanoTime();
                     String decryptedMessage = CryptoUtils.decrypt("AES/CBC/PKCS5Padding", input, key, iv);
+                    long aesDecryptionEndTime = System.nanoTime();
+                    long aesDecryptionTime = aesDecryptionEndTime - aesDecryptionStartTime;
+                    System.out.println("AES Decryption Time: " + aesDecryptionTime + " nanoseconds");
                     System.out.println("Received from client: " + decryptedMessage);
 
                     // Send an acknowledgment
@@ -53,7 +63,7 @@ public class Server {
             clientSocket.close();
             serverSocket.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 

@@ -37,7 +37,11 @@ public class Client {
                 input = scanner.nextLine();
 
                 // Encrypt and send the message
+                long aesEncryptionStartTime = System.nanoTime();
                 String encryptedMessage = CryptoUtils.encrypt("AES/CBC/PKCS5Padding", input, key, iv);
+                long aesEncryptionEndTime = System.nanoTime();
+                long aesEncryptionTime = aesEncryptionEndTime - aesEncryptionStartTime;
+                System.out.println("AES Encryption Time: " + aesEncryptionTime + " nanoseconds");
                 writer.write(encryptedMessage + "\n");
                 writer.flush();
 
@@ -49,7 +53,7 @@ public class Client {
             // Close resources
             socket.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 

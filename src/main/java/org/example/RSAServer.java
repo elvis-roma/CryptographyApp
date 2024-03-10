@@ -1,12 +1,8 @@
 package org.example;
 
-import javax.crypto.*;
-import javax.crypto.spec.IvParameterSpec;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.KeyPair;
 
 public class RSAServer {
@@ -22,9 +18,14 @@ public class RSAServer {
             System.out.println("Client connected.");
 
             // Generate and store RSA key pair
+            long startTime = System.currentTimeMillis();
             KeyPair keyPair = RSAUtils.generateRSAKeyPair();
+            long endTime = System.currentTimeMillis();
+            System.out.println("RSA Key Generation Time ("
+                    + 2048 + " bits): " + (endTime - startTime) + " milliseconds");
             RSAUtils.storePublicKeyToFile(keyPair.getPublic(), "public.key");
             RSAUtils.storePrivateKeyToFile(keyPair.getPrivate(), "private.key");
+            RSAUtils.measureRSAKeyGenerationMemory();
 
             // Send public key to the client
             ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
@@ -40,7 +41,11 @@ public class RSAServer {
                 input = reader.readLine();
                 if (!input.equals("finish")) {
                     // Decrypt the message
+                    long rsaDecryptionStartTime = System.nanoTime();
                     String decryptedMessage = RSAUtils.decryptString(input, keyPair.getPrivate());
+                    long rsaDecryptionEndTime = System.nanoTime();
+                    long rsaDecryptionTime = rsaDecryptionEndTime - rsaDecryptionStartTime;
+                    System.out.println("RSA Decryption Time: " + rsaDecryptionTime + " nanoseconds");
                     System.out.println("Received from client: " + decryptedMessage);
 
                     // Send an acknowledgment
@@ -54,8 +59,9 @@ public class RSAServer {
             // Close resources
             clientSocket.close();
             serverSocket.close();
+            MemoryUsageComparison.measureRSAMemoryUsage();
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 }

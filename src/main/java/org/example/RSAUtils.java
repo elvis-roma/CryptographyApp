@@ -19,6 +19,11 @@ public class RSAUtils {
         return generator.generateKeyPair();
     }
 
+    public static void measureRSAKeyGenerationMemory() throws Exception {
+        KeyPair rsaKeyPair = generateRSAKeyPair();
+        MemoryUsageComparison.measureMemoryUsage("RSA Key Pair Generation", rsaKeyPair);
+    }
+
     public static void storePrivateKeyToFile(PrivateKey privateKey, String fileName) throws Exception {
         try (FileOutputStream fos = new FileOutputStream(fileName)) {
             fos.write(privateKey.getEncoded());
